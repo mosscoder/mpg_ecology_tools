@@ -13,11 +13,13 @@ source_app <- function(local = FALSE, dev = FALSE) {
   source('/Users/kyledoherty/mpgPostdoc/projects/ecology_tools/app/ui.R')
   source('/Users/kyledoherty/mpgPostdoc/projects/ecology_tools/app/server.R')
   source('/Users/kyledoherty/mpgPostdoc/projects/ecology_tools/app/global.R')
-  } else{
+    }
+  if(isFALSE(local) & isFALSE(dev)){
     source('https://raw.githubusercontent.com/mosscoder/mpg_ecology_tools/main/ui.R') #remote ui
     source('https://raw.githubusercontent.com/mosscoder/mpg_ecology_tools/main/server.R') #remote server
     source('https://raw.githubusercontent.com/mosscoder/mpg_ecology_tools/main/global.R') #remote global
   }
+  
 }
 
 source_app(local = FALSE, dev = TRUE)
