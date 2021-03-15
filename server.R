@@ -32,21 +32,21 @@ server <- function(input, output,session) {
     
     if(!is.na(clust_id)  & isFALSE(input$sim_mode)){
       
-      pdf_subset('www/cluster_profiles.pdf', pages = clust_id, output = 'www/map.pdf')
-      pdf_subset('www/cover_values.pdf', pages = clust_id, output = 'www/cover.pdf')
-      pdf_subset('www/diversity_values.pdf', pages = clust_id, output = 'www/div.pdf')
+      pdf_subset(file.path(tdir,'cluster_profiles.pdf'), pages = clust_id, output = file.path(tdir, 'map.pdf'))
+      pdf_subset(file.path(tdir,'cover_values.pdf'), pages = clust_id, output = file.path(tdir, 'cover.pdf'))
+      pdf_subset(file.path(tdir,'diversity_values.pdf'), pages = clust_id, output = file.path(tdir, 'div.pdf'))
       
-      to_comb <- c('www/map.pdf',
-                   'www/cover.pdf',
-                   'www/div.pdf')
+      to_comb <- c(file.path(tdir, 'map.pdf'),
+                   file.path(tdir, 'cover.pdf'),
+                   file.path(tdir, 'div.pdf'))
       
       pdf_combine(to_comb,
-                  output = "www/joined.pdf")
+                  output = file.path(tdir, 'joined.pdf'))
       
       file.remove(to_comb)
       
       output$modal_1 <- renderUI({
-        showModal(modalDialog(tags$iframe(style="height:85vh; width:100%", src="joined.pdf"), size = 'l', easyClose = T, footer = NULL))
+        showModal(modalDialog(tags$iframe(style="height:85vh; width:100%", src='joined.pdf'), size = 'l', easyClose = T, footer = NULL))
         
       })
     }
