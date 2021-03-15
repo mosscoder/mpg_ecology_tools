@@ -1,0 +1,12 @@
+name: ecology_tools
+title: ecology_tools
+username:
+account: mpgranch
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 3784027
+bundleId: 4348915
+url: https://mpgranch.shinyapps.io/ecology_tools/
+when: 1615830844.71354
+asMultiple: FALSE
+asStatic: FALSE
