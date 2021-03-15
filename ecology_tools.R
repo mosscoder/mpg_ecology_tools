@@ -27,6 +27,6 @@ source_app <- function(local = FALSE, dev = FALSE) {
   }
 }
 
-source_app(local = FALSE, dev = TRUE)
+source_app(local = FALSE, dev = FALSE)
 shinyApp(ui = ui, 
          server = server)
