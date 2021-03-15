@@ -1,13 +1,3 @@
-library(leafem)
-library(leaflet)
-library(leaflet.opacity)
-library(shiny)
-library(shinyWidgets)
-library(raster)
-library(rgdal)
-library(pdftools)
-library(scales)
-
 server <- function(input, output,session) {
   
   output$myMap <- renderLeaflet({

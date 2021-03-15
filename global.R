@@ -1,13 +1,3 @@
-library(leafem)
-library(leaflet)
-library(leaflet.opacity)
-library(shiny)
-library(shinyWidgets)
-library(raster)
-library(rgdal)
-library(pdftools)
-library(scales)
-
 dim_red_stack <- stack('www/umap_cluster.tif')
 pal <- read.csv('www/color_palette.csv')$pal
 

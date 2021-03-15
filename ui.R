@@ -1,14 +1,3 @@
-library(leafem)
-library(leaflet)
-library(leaflet.opacity)
-library(shiny)
-library(shinyWidgets)
-library(raster)
-library(rgdal)
-library(pdftools)
-library(scales)
-
-
 ui <-  fillPage(
   leafletOutput("myMap", height = '100%'),
   uiOutput("modal_1", width = '100%', height = '100%'),
