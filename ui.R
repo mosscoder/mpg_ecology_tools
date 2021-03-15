@@ -1,3 +1,6 @@
+library(leaflet)
+library(shinyWidgets)
+
 ui <-  fillPage(
   leafletOutput("myMap", height = '100%'),
   uiOutput("modal_1", width = '100%', height = '100%'),
