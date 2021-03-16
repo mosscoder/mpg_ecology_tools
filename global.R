@@ -4,7 +4,7 @@ dir.create(tdir)
 
 files <- c(
   'cluster_priorities.csv',
-  #'cluster_profiles.pdf',
+  'cluster_profiles.pdf',
   'color_palette.csv',
   'cover_values.pdf',
   'diversity_values.pdf',
