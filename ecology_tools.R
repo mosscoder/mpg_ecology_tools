@@ -7,6 +7,7 @@ library(raster)
 library(rgdal)
 library(pdftools)
 library(scales)
+library(tidyverse)
 
 source_app <- function(local = FALSE, dev = FALSE) {
   if(isTRUE(local)){
