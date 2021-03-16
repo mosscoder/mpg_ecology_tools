@@ -1,19 +1,23 @@
 server <- function(input, output,session) {
   
   output$myMap <- renderLeaflet({
-    map <- leaflet(options = leafletOptions(
-      attributionControl=FALSE)) %>%
+    
+    leaflet(cluster_shap) %>%
       addProviderTiles("Esri.WorldImagery") %>%
-      addRasterImage(
-        clust_wm,
-        project = FALSE,
-        colors = pal,
-        group = "Cluster overlay",
-        layerId = 'cluster',
-        opacity = 0.65
+      addPolygons(
+        color = "transparent",
+        smoothFactor = 1.25,
+        fillOpacity = 0.35,
+        fillColor = ~ colorFactor(palette = source_pal, domain = ump_cls)(ump_cls),
+        group = 'Environmental clusters',
+        highlightOptions = highlightOptions(
+          color = "white",
+          weight = 1,
+          bringToFront = TRUE
+        )
       ) %>%
-      addOpacitySlider(layerId = 'cluster')
-    map
+      addLayersControl( overlayGroups = c('Environmental clusters'))
+
   })
   
   observe({
