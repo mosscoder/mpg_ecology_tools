@@ -8,16 +8,39 @@ server <- function(input, output,session) {
         color = "transparent",
         smoothFactor = 1.25,
         fillOpacity = 0.35,
-        fillColor = ~ colorFactor(palette = source_pal, domain = ump_cls)(ump_cls),
+        fillColor = ~ colorFactor(palette = source_pal$pal, domain = ump_cls)(ump_cls),
         group = 'Environmental clusters',
         highlightOptions = highlightOptions(
           color = "white",
           weight = 1,
-          bringToFront = TRUE
+          bringToFront = FALSE
         )
       ) %>%
-      addLayersControl( overlayGroups = c('Environmental clusters'))
+      addLayersControl( overlayGroups = c('Environmental clusters', 'Grid points'))
     
+  })
+  
+  focal_dat <- reactive({
+    req(input$pt_select)
+    sel <- input$pt_select
+    out <- gp_full_ll
+    if(sel > 0){
+      out <- out %>% filter(year == sel)
+    }
+    out
+    
+  })
+  
+  observe({
+    
+    leafletProxy("myMap", data = focal_dat())  %>%
+      clearMarkers() %>%
+      addCircleMarkers( lng= ~long, lat =~lat, 
+                       radius=5, color='white',fillOpacity = 1, stroke = F,
+                       group='Grid points', label=~id) %>%
+      addCircleMarkers(lng= ~long, lat =~lat,
+                     radius=4, color= ~pal, fillOpacity = 1, stroke = F,
+                     group='Grid points', label=~id)
   })
   
   observe({
@@ -31,8 +54,8 @@ server <- function(input, output,session) {
     click_xy <- SpatialPoints(coords = data.frame(click$lng, click$lat),
                               proj4string=CRS('+init=epsg:4326'))
     click_trans <- spTransform(click_xy, '+init=epsg:3857') 
-    clust_id <- extract(clust_wm, click_trans)
-    umap_dat <- extract(umap_wm, click_trans)
+    clust_id <- raster::extract(clust_wm, click_trans)
+    umap_dat <- raster::extract(umap_wm, click_trans)
     
     if(!is.na(clust_id)  & isFALSE(input$sim_mode)){
       

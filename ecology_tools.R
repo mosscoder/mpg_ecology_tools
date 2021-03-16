@@ -7,6 +7,7 @@ library(raster)
 library(rgdal)
 library(pdftools)
 library(scales)
+library(tidyverse)
 
 source_app <- function(local = FALSE, dev = FALSE) {
   if(isTRUE(local)){
@@ -27,6 +28,6 @@ source_app <- function(local = FALSE, dev = FALSE) {
   }
 }
 
-source_app(local = FALSE, dev = TRUE)
+source_app(local = TRUE, dev = TRUE)
 shinyApp(ui = ui, 
          server = server)
