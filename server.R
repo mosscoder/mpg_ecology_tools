@@ -17,7 +17,7 @@ server <- function(input, output,session) {
         )
       ) %>%
       addLayersControl( overlayGroups = c('Environmental clusters'))
-
+    
   })
   
   observe({
