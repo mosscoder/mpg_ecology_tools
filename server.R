@@ -2,16 +2,21 @@ server <- function(input, output,session) {
   
   output$myMap <- renderLeaflet({
     
-    leaflet(cluster_shap) %>%
+    leaflet(cluster_shap,
+            options = leafletOptions(attributionControl=FALSE,
+                                     zoomControl = FALSE)) %>%
       addProviderTiles("Esri.WorldImagery") %>%
       addPolygons(
-        color = "transparent",
+        color = "black",
+        weight = 0.1, 
         smoothFactor = 1.25,
         fillOpacity = 0.35,
-        fillColor = ~ colorFactor(palette = source_pal$pal, domain = ump_cls)(ump_cls),
+        fillColor = ~colorFactor(palette = source_pal$pal, domain = ump_cls)(ump_cls),
         group = 'Environmental clusters',
         highlightOptions = highlightOptions(
-          color = "white",
+          color = "transparent",
+          fillColor = 'red',
+          fillOpacity = 0.75,
           weight = 1,
           bringToFront = FALSE
         )
@@ -21,15 +26,47 @@ server <- function(input, output,session) {
   })
   
   focal_dat <- reactive({
-    req(input$pt_select)
     sel <- input$pt_select
-    out <- gp_full_ll
+    out <- gp_full_ll@data %>%
+      pivot_longer(cols = samp_2021:samp_2041,
+                   names_to = 'sample_year') %>%
+      filter(value == 1) %>%
+      mutate(sample_year = as.integer(str_remove(sample_year, 'samp_'))) %>%
+      select(-value)
+    
     if(sel > 0){
-      out <- out %>% filter(year == sel)
+      out <- out %>% filter(sample_year == sel)
     }
     out
-    
   })
+  
+  observe({
+    focal_year_shp <- gp_full_ll
+
+    if(input$pt_select != 0){
+      yr_colname <- paste('samp', input$pt_select, sep='_')
+    
+      focal_year_shp <- focal_year_shp[which(focal_year_shp@data[,yr_colname] == 1),]
+    }
+    focal_name <- file.path('www',
+                           ifelse(input$pt_select == 0, 'all_grid_points.kmz', paste(input$pt_select, '_gp_targets.kml'))
+                           )
+
+
+    KML(focal_year_shp, focal_name, overwrite = TRUE)
+
+    output$points_kml <- downloadHandler(
+      filename = function() {
+        basename(focal_name)
+      },
+      content = function(file) {
+        file.copy(focal_name, file)
+      }
+
+    )
+  })
+
+  
   
   observe({
     
@@ -136,7 +173,9 @@ server <- function(input, output,session) {
   session$onSessionEnded(function() {
     trash <- c('www/joined.pdf',
                'www/env_sim.kmz')
-    file.remove(trash)
+    for(i in trash){
+    file.remove(i)
+    }
   })
   
   

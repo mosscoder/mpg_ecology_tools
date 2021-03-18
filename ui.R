@@ -1,5 +1,4 @@
 ui <-  fillPage(
-  #tableOutput('table'),
   leafletOutput("myMap", height = '100%'),
   uiOutput("modal_1", width = '100%', height = '100%'),
   uiOutput("modal_2", width = '100%', height = '100%'),
@@ -10,6 +9,7 @@ ui <-  fillPage(
   ), 
   absolutePanel(
     selectInput(
+      width = '130px',
       label = NULL,
       inputId = 'pt_select',
       choices = point_choices
@@ -23,7 +23,8 @@ ui <-  fillPage(
       offStatus = "danger"
     ),
     top = 10,
-    left = 50,
-  ), 
-  setBackgroundColor("ghostwhite")
+    left = 10,
+  ),
+  absolutePanel(downloadButton(outputId = 'points_kml', label = NULL),
+                top = 10, left = 145)
 )
