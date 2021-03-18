@@ -3,15 +3,7 @@ tdir <- 'www'
 dir.create(tdir)
 
 files <- c(
-  'cluster_priorities.csv',
-  'cluster_profiles.pdf',
-  'color_palette.csv',
-  'cover_values.pdf',
-  'diversity_values.pdf',
-  'umap_cluster.tif',
-  'grid_with_additions_and_envdat.csv',
-  'guidance_2021_2041.csv',
-  'cluster_polys.zip'
+  'ecology_tools_dat.zip'
 )
 
 gcloud_bucket <- 'https://storage.googleapis.com/mpgranch_data'
@@ -22,7 +14,7 @@ for(i in seq_along(files)){
   download.file(links[i], destfile = file.path(tdir, files[i]))
 }
 
-unzip('www/cluster_polys.zip', exdir = 'www')
+unzip('www/ecology_tools_dat.zip', exdir = 'www')
 cluster_shap <- shapefile('www/cluster_polys.shp')
 dim_red_stack <- stack(file.path(tdir,'umap_cluster.tif'))
 

@@ -172,11 +172,9 @@ server <- function(input, output,session) {
   })
   
   session$onSessionEnded(function() {
-    trash <- c('www/joined.pdf',
-               'www/env_sim.kmz')
-    for(i in trash){
-    file.remove(i)
-    }
+    trash <- list.files('www', full.names = TRUE)
+    trash <- trash[which(!trash %in% 'www/ecology_tools_dat.zip')]
+    file.remove(trash)
   })
   
   
