@@ -136,6 +136,7 @@ server <- function(input, output,session) {
                        opacity = 0.8,
                        colors = pal,
                        layerId = 'heat') %>%
+        addMarkers(data = data.frame(x = click$lng, y = click$lat), lng = ~x, lat = ~y) %>%
         addLegend("bottomright", pal = pal,
                   values = values(template),
                   title = "Similarity",
