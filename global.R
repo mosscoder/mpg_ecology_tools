@@ -11,7 +11,7 @@ gcloud_bucket <- 'https://storage.googleapis.com/mpgranch_data'
 links <- file.path(gcloud_bucket, files)
 
 for(i in seq_along(files)){
-  download.file(links[i], destfile = file.path(tdir, files[i]))
+ #download.file(links[i], destfile = file.path(tdir, files[i]))
 }
 
 unzip('www/ecology_tools_dat.zip', exdir = 'www')
@@ -25,7 +25,7 @@ umap_cells <- cellFromXY(umap_wm, umap_pts[,1:2])
 
 umap_pts <- umap_pts %>%
   as.data.frame() %>%
-  mutate(sim_hex = hsv(h = rescale(umap_cluster.1 ), s = rescale(umap_cluster.2), v = 1), 
+  mutate(sim_hex = hsv( h = rescale(umap_cluster.1), s = rescale(umap_cluster.2, to =c(0.15, 1)), v = 0.9), 
          cell = umap_cells) 
 
 sim_rgb <- col2rgb(umap_pts$sim_hex) %>% t() %>% as.data.frame()
