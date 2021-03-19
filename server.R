@@ -25,9 +25,9 @@ server <- function(input, output,session) {
                   group = 'Environmental clusters',
                   options = pathOptions(pane = "polys"),
                   highlightOptions = highlightOptions(
-                    color = "cyan",
-                    fillColor = 'black',
-                    fillOpacity = 0.5,
+                    color = "black",
+                    fillColor = 'red',
+                    fillOpacity = 1,
                     weight = 2.5,
                     bringToFront = FALSE
                   )

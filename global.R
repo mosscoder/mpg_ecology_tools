@@ -25,7 +25,7 @@ umap_cells <- cellFromXY(umap_wm, umap_pts[,1:2])
 
 umap_pts <- umap_pts %>%
   as.data.frame() %>%
-  mutate(sim_hex = hsv( h = rescale(umap_cluster.1), s = rescale(umap_cluster.2, to =c(0.15, 1)), v = 0.9), 
+  mutate(sim_hex = hsv( h = rescale(umap_cluster.1), s = rescale(umap_cluster.2, to =c(0.15, 1)), v = 1), 
          cell = umap_cells) 
 
 sim_rgb <- col2rgb(umap_pts$sim_hex) %>% t() %>% as.data.frame()
