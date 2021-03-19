@@ -15,20 +15,25 @@ for(i in seq_along(files)){
 }
 
 unzip('www/ecology_tools_dat.zip', exdir = 'www')
-cluster_shap <- shapefile('www/cluster_polys.shp')
 dim_red_stack <- stack(file.path(tdir,'umap_cluster.tif'))
 
-source_pal <- read.csv(file.path(tdir, 'color_palette.csv')) %>% mutate(cluster = id) %>% select(-id)
-sim_pal <- read.csv(file.path(tdir, 'sim_pal.csv'))
-
-umap_wm <- projectRasterForLeaflet(dim_red_stack[[1:2]], method = 'bilinear')
+umap_wm <- template <-projectRasterForLeaflet(dim_red_stack[[1:2]], method = 'bilinear')
+template <- template[[1]]
 umap_pts <- rasterToPoints(umap_wm)
 umap_cells <- cellFromXY(umap_wm, umap_pts[,1:2])
 
-clust_wm <- template <- projectRasterForLeaflet(dim_red_stack[[3]], method = 'ngb')
+umap_pts <- umap_pts %>%
+  as.data.frame() %>%
+  mutate(sim_hex = hsv(h = rescale(umap_cluster.1 ), s = rescale(umap_cluster.2), v = 1)) 
 
-pal <- colorNumeric(source_pal$pal, values(clust_wm), na.color = "transparent")
+sim_rgb <- col2rgb(umap_pts$sim_hex) %>% t() %>% as.data.frame()
 
+umap_sim_rgb <- stack(replicate(template, n = 3))
+for(i in 1:3){
+  values(umap_sim_rgb[[i]])[umap_cells] <- sim_rgb[,i]
+}
+
+cluster_shap <- shapefile('www/cluster_polys.shp')
 
 gp_full <-
   read.csv(file.path(tdir, 'grid_with_additions_and_envdat.csv')) %>%

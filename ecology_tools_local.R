@@ -8,6 +8,7 @@ library(rgdal)
 library(pdftools)
 library(scales)
 library(tidyverse)
+library(RANN)
 
 source('/Users/kyledoherty/mpgPostdoc/projects/ecology_tools/app/global.R')
 source('/Users/kyledoherty/mpgPostdoc/projects/ecology_tools/app/ui.R')

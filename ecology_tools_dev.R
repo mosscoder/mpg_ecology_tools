@@ -8,6 +8,7 @@ library(rgdal)
 library(pdftools)
 library(scales)
 library(tidyverse)
+library(RANN)
 
 source('https://raw.githubusercontent.com/mosscoder/mpg_ecology_tools/dev/global.R') #remote global
 source('https://raw.githubusercontent.com/mosscoder/mpg_ecology_tools/dev/ui.R') #remote ui

@@ -5,64 +5,37 @@ server <- function(input, output,session) {
     leaflet(
             options = leafletOptions(attributionControl=FALSE,
                                      zoomControl = FALSE)) %>%
-      setView(lng = -114.0045, lat = 46.69875, zoom = 14) %>%
       addProviderTiles("Esri.WorldImagery") %>%
-      addLayersControl( overlayGroups = c('Environmental clusters', 'Grid points')) %>%
+      addRasterRGB(umap_sim_rgb,
+                   r = 1, g = 2, b = 3, 
+                   quantiles = c(0,1), 
+                   na.color = "transparent",
+                   group = 'Environmental clusters',
+                   project = FALSE,
+                   layerId = 'simras') %>%
+      addLayersControl(overlayGroups = c('Environmental clusters', 'Grid points')) %>%
       addMapPane("polys", zIndex = 410) %>%
-      addMapPane("markers", zIndex = 420) 
-    
-  })
-  
-  observe({
-    #browser()
-    
-    # pal_current <- ifelse(isTRUE(input$sim_mode),
-    #                       sim_pal$sim_hex,
-    #                       source_pal$pal)
-    #                       
-    # fill_pal <- colorFactor(palette = pal_current, domain = cluster_shap$ump_cls)
-    if(isFALSE(input$sim_mode)){
-    leafletProxy("myMap")  %>%
-      clearShapes() %>%
+      addMapPane("markers", zIndex = 420)  %>%
       addPolygons(data = cluster_shap,
-        color = "black",
-        weight = 0.1, 
-        smoothFactor = 1.25,
-        fillOpacity = 0.30,
-        fillColor = ~colorFactor(palette = source_pal$pal, domain = ump_cls)(ump_cls),
-        group = 'Environmental clusters',
-        options = pathOptions(pane = "polys"),
-        highlightOptions = highlightOptions(
-          color = "transparent",
-          fillColor = 'red',
-          fillOpacity = 0.75,
-          weight = 1,
-          bringToFront = FALSE
-        )
-      ) } else{
+                  color = "transparent",
+                  weight = 0.25, 
+                  smoothFactor = 1.25,
+                  fillOpacity = 0,
+                  fillColor = 'transparent',
+                  group = 'Environmental clusters',
+                  options = pathOptions(pane = "polys"),
+                  highlightOptions = highlightOptions(
+                    color = "cyan",
+                    fillColor = 'black',
+                    fillOpacity = 0.5,
+                    weight = 2.5,
+                    bringToFront = FALSE
+                  )
+                    
+      ) %>%
+      addOpacitySlider(layerId = 'simras')
     
-    leafletProxy("myMap")  %>%
-          clearShapes() %>%
-          addPolygons(
-            data = cluster_shap,
-            color = "black",
-            weight = 0.1,
-            smoothFactor = 1.25,
-            fillOpacity = 0.75,
-            fillColor = ~colorFactor(palette = sim_pal$sim_hex, domain = ump_cls)(ump_cls),
-            group = 'Environmental clusters',
-            options = pathOptions(pane = "polys"),
-            highlightOptions = highlightOptions(
-              color = "transparent",
-              fillColor = 'black',
-              fillOpacity = 0.75,
-              weight = 1,
-              bringToFront = FALSE
-            )
-          )
-      }
   })
-  
   
   focal_dat <- reactive({
     sel <- input$pt_select
@@ -121,7 +94,7 @@ server <- function(input, output,session) {
                      options = pathOptions(pane = "markers"))
   })
   
-  observe({
+  observeEvent(input$myMap_click, {
     click <- input$myMap_click
     if(is.null(click))
       return()
@@ -159,7 +132,10 @@ server <- function(input, output,session) {
     
     if(!is.na(umap_dat) & isTRUE(input$sim_mode)){
       
-      dists <- unlist(lapply(FUN = function(x) {unlist(dist(rbind(umap_dat, umap_pts[x,3:4])))}, X = seq_along(umap_pts[,1])))
+      
+      
+      dists <- RANN::nn2(data = umap_dat,
+                query = umap_pts[,3:4])$nn.dists %>% unlist()
       
       values(template)[umap_cells] <- 1-rescale(dists)
       
@@ -170,13 +146,15 @@ server <- function(input, output,session) {
         na.color = 'transparent'
       )
       
-      heatmap <- leaflet(options = leafletOptions(attributionControl = FALSE)) %>%
+      heatmap <- leaflet(options = leafletOptions(attributionControl = FALSE,
+                                                  zooomControl = FALSE)) %>%
         addProviderTiles("Esri.WorldImagery") %>%
         addRasterImage(template,
                        project = FALSE,
-                       opacity = 0.8,
+                       opacity = 0.5,
                        colors = pal,
-                       layerId = 'heat') %>%
+                       layerId = 'heat',
+                       group = 'Heatmap') %>%
         addMarkers(data = data.frame(x = click$lng, y = click$lat), lng = ~x, lat = ~y) %>%
         addLegend("bottomright", pal = pal,
                   values = values(template),
@@ -184,18 +162,18 @@ server <- function(input, output,session) {
                   
                   opacity = 1
         ) %>%
-        addOpacitySlider(layerId = 'heat') 
+        addLayersControl(overlayGroups = c('Heatmap')) 
       
-      out_heat <- projectRaster(template, crs = CRS("+proj=longlat +datum=WGS84"))
-      names(out_heat) <- 'environmental_similarity'
       heat_name <- 'www/env_sim'
-      KML(out_heat, heat_name, col = cols, overwrite = TRUE)
       
       output$heat_kmz <- downloadHandler(
         filename = function() {
           paste(heat_name, ".kmz", sep="")
         },
         content = function(file) {
+          out_heat <- projectRaster(template, crs = CRS("+proj=longlat +datum=WGS84"))
+          names(out_heat) <- 'environmental_similarity'
+          KML(out_heat, heat_name, col = cols, overwrite = TRUE)
           file.copy('www/env_sim.kmz', file)
         }
         
