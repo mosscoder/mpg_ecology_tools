@@ -10,9 +10,9 @@ gcloud_bucket <- 'https://storage.googleapis.com/mpgranch_data'
 
 links <- file.path(gcloud_bucket, files)
 
-# for(i in seq_along(files)){
-#   download.file(links[i], destfile = file.path(tdir, files[i]))
-# }
+for(i in seq_along(files)){
+  download.file(links[i], destfile = file.path(tdir, files[i]))
+}
 
 unzip('www/ecology_tools_dat.zip', exdir = 'www')
 cluster_shap <- shapefile('www/cluster_polys.shp')
