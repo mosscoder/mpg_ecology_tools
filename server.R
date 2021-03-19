@@ -2,17 +2,36 @@ server <- function(input, output,session) {
   
   output$myMap <- renderLeaflet({
     
-    leaflet(cluster_shap,
+    leaflet(
             options = leafletOptions(attributionControl=FALSE,
                                      zoomControl = FALSE)) %>%
+      setView(lng = -114.0045, lat = 46.69875, zoom = 14) %>%
       addProviderTiles("Esri.WorldImagery") %>%
-      addPolygons(
+      addLayersControl( overlayGroups = c('Environmental clusters', 'Grid points')) %>%
+      addMapPane("polys", zIndex = 410) %>%
+      addMapPane("markers", zIndex = 420) 
+    
+  })
+  
+  observe({
+    #browser()
+    
+    # pal_current <- ifelse(isTRUE(input$sim_mode),
+    #                       sim_pal$sim_hex,
+    #                       source_pal$pal)
+    #                       
+    # fill_pal <- colorFactor(palette = pal_current, domain = cluster_shap$ump_cls)
+    if(isFALSE(input$sim_mode)){
+    leafletProxy("myMap")  %>%
+      clearShapes() %>%
+      addPolygons(data = cluster_shap,
         color = "black",
         weight = 0.1, 
         smoothFactor = 1.25,
-        fillOpacity = 0.35,
+        fillOpacity = 0.30,
         fillColor = ~colorFactor(palette = source_pal$pal, domain = ump_cls)(ump_cls),
         group = 'Environmental clusters',
+        options = pathOptions(pane = "polys"),
         highlightOptions = highlightOptions(
           color = "transparent",
           fillColor = 'red',
@@ -20,10 +39,30 @@ server <- function(input, output,session) {
           weight = 1,
           bringToFront = FALSE
         )
-      ) %>%
-      addLayersControl( overlayGroups = c('Environmental clusters', 'Grid points'))
+      ) } else{
     
+    leafletProxy("myMap")  %>%
+          clearShapes() %>%
+          addPolygons(
+            data = cluster_shap,
+            color = "black",
+            weight = 0.1,
+            smoothFactor = 1.25,
+            fillOpacity = 0.75,
+            fillColor = ~colorFactor(palette = sim_pal$sim_hex, domain = ump_cls)(ump_cls),
+            group = 'Environmental clusters',
+            options = pathOptions(pane = "polys"),
+            highlightOptions = highlightOptions(
+              color = "transparent",
+              fillColor = 'black',
+              fillOpacity = 0.75,
+              weight = 1,
+              bringToFront = FALSE
+            )
+          )
+      }
   })
+  
   
   focal_dat <- reactive({
     sel <- input$pt_select
@@ -74,10 +113,12 @@ server <- function(input, output,session) {
       clearMarkers() %>%
       addCircleMarkers( lng= ~long, lat =~lat, 
                        radius=5, color='white',fillOpacity = 1, stroke = F,
-                       group='Grid points', label=~id) %>%
+                       group='Grid points', label=~id,
+                       options = pathOptions(pane = "markers")) %>%
       addCircleMarkers(lng= ~long, lat =~lat,
                      radius=4, color= ~pal, fillOpacity = 1, stroke = F,
-                     group='Grid points', label=~id)
+                     group='Grid points', label=~id,
+                     options = pathOptions(pane = "markers"))
   })
   
   observe({
@@ -172,7 +213,7 @@ server <- function(input, output,session) {
   })
   
   session$onSessionEnded(function() {
-    trash <- list.files('www', full.names = TRUE)
+    trash <- setdiff(list.files('www', full.names = TRUE), list.dirs('www', recursive = FALSE, full.names = TRUE))
     trash <- trash[which(!trash %in% 'www/ecology_tools_dat.zip')]
     file.remove(trash)
   })

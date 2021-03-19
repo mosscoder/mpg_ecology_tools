@@ -10,15 +10,16 @@ gcloud_bucket <- 'https://storage.googleapis.com/mpgranch_data'
 
 links <- file.path(gcloud_bucket, files)
 
-for(i in seq_along(files)){
-  download.file(links[i], destfile = file.path(tdir, files[i]))
-}
+# for(i in seq_along(files)){
+#   download.file(links[i], destfile = file.path(tdir, files[i]))
+# }
 
 unzip('www/ecology_tools_dat.zip', exdir = 'www')
 cluster_shap <- shapefile('www/cluster_polys.shp')
 dim_red_stack <- stack(file.path(tdir,'umap_cluster.tif'))
 
 source_pal <- read.csv(file.path(tdir, 'color_palette.csv')) %>% mutate(cluster = id) %>% select(-id)
+sim_pal <- read.csv(file.path(tdir, 'sim_pal.csv'))
 
 umap_wm <- projectRasterForLeaflet(dim_red_stack[[1:2]], method = 'bilinear')
 umap_pts <- rasterToPoints(umap_wm)
@@ -27,6 +28,7 @@ umap_cells <- cellFromXY(umap_wm, umap_pts[,1:2])
 clust_wm <- template <- projectRasterForLeaflet(dim_red_stack[[3]], method = 'ngb')
 
 pal <- colorNumeric(source_pal$pal, values(clust_wm), na.color = "transparent")
+
 
 gp_full <-
   read.csv(file.path(tdir, 'grid_with_additions_and_envdat.csv')) %>%
