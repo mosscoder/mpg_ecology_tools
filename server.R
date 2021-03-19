@@ -38,6 +38,7 @@ server <- function(input, output,session) {
   })
   
   focal_dat <- reactive({
+    
     sel <- input$pt_select
     out <- gp_full_ll@data %>%
       pivot_longer(cols = samp_2021:samp_2041,
@@ -49,7 +50,9 @@ server <- function(input, output,session) {
     if(sel > 0){
       out <- out %>% filter(sample_year == sel)
     }
+    
     out
+    
   })
   
   observe({
@@ -81,15 +84,22 @@ server <- function(input, output,session) {
   
   
   observe({
+    d <- focal_dat()
+    # pal_key <- d %>% select(id, pal) %>% unique()
+    # browser()
+    # point_pal <- colorNumeric(palette = pal_key$pal, domain = pal_key$id, na.color = 'transparent')
     
-    leafletProxy("myMap", data = focal_dat())  %>%
+    leafletProxy("myMap", data = d)  %>%
       clearMarkers() %>%
       addCircleMarkers( lng= ~long, lat =~lat, 
                        radius=5, color='white',fillOpacity = 1, stroke = F,
                        group='Grid points', label=~id,
                        options = pathOptions(pane = "markers")) %>%
       addCircleMarkers(lng= ~long, lat =~lat,
-                     radius=4, color= ~pal, fillOpacity = 1, stroke = F,
+                     radius=4, 
+                     color= 'grey50', 
+                     #color= ~point_pal(id), 
+                     fillOpacity = 1, stroke = F,
                      group='Grid points', label=~id,
                      options = pathOptions(pane = "markers"))
   })
