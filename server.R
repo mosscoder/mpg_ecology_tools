@@ -6,13 +6,13 @@ server <- function(input, output,session) {
             options = leafletOptions(attributionControl=FALSE,
                                      zoomControl = FALSE)) %>%
       addProviderTiles("Esri.WorldImagery") %>%
-      addRasterRGB(umap_sim_rgb,
-                   r = 1, g = 2, b = 3, 
-                   quantiles = c(0,1), 
-                   na.color = "transparent",
-                   group = 'Environmental clusters',
-                   project = FALSE,
-                   layerId = 'simras') %>%
+      addRasterImage(clust_wm,
+                colors = colorNumeric(domain =sim_pal$cluster, sim_pal$sim_hex,
+                                      na.color = "transparent"),
+                
+                group = 'Environmental clusters',
+                project = FALSE,
+                layerId = 'simras')%>%
       addLayersControl(overlayGroups = c('Environmental clusters', 'Grid points')) %>%
       addMapPane("polys", zIndex = 410) %>%
       addMapPane("markers", zIndex = 420)  %>%
@@ -60,7 +60,7 @@ server <- function(input, output,session) {
 
     if(input$pt_select != 0){
       yr_colname <- paste('samp', input$pt_select, sep='_')
-    
+
       focal_year_shp <- focal_year_shp[which(focal_year_shp@data[,yr_colname] == 1),]
     }
     focal_name <- file.path('www',
@@ -85,20 +85,16 @@ server <- function(input, output,session) {
   
   observe({
     d <- focal_dat()
-    # pal_key <- d %>% select(id, pal) %>% unique()
-    # browser()
-    # point_pal <- colorNumeric(palette = pal_key$pal, domain = pal_key$id, na.color = 'transparent')
-    
+  
     leafletProxy("myMap", data = d)  %>%
       clearMarkers() %>%
       addCircleMarkers( lng= ~long, lat =~lat, 
-                       radius=5, color='white',fillOpacity = 1, stroke = F,
+                       radius=5.5, color='black',fillOpacity = 1, stroke = F,
                        group='Grid points', label=~id,
                        options = pathOptions(pane = "markers")) %>%
       addCircleMarkers(lng= ~long, lat =~lat,
                      radius=4, 
-                     color= 'grey50', 
-                     #color= ~point_pal(id), 
+                     color= d$sim_hex, 
                      fillOpacity = 1, stroke = F,
                      group='Grid points', label=~id,
                      options = pathOptions(pane = "markers"))
@@ -141,8 +137,6 @@ server <- function(input, output,session) {
     
     
     if(!is.na(umap_dat) & isTRUE(input$sim_mode)){
-      
-      
       
       dists <- RANN::nn2(data = umap_dat,
                 query = umap_pts[,3:4])$nn.dists %>% unlist()
