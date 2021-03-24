@@ -13,6 +13,7 @@ server <- function(input, output,session) {
                 group = 'Environmental clusters',
                 project = FALSE,
                 layerId = 'simras')%>%
+
       addLayersControl(overlayGroups = c('Environmental clusters', 'Grid points')) %>%
       addMapPane("polys", zIndex = 410) %>%
       addMapPane("markers", zIndex = 420)  %>%
@@ -28,7 +29,7 @@ server <- function(input, output,session) {
                     color = "black",
                     fillColor = 'red',
                     fillOpacity = 1,
-                    weight = 2.5,
+                    weight = 1,
                     bringToFront = FALSE
                   )
                     

@@ -11,7 +11,7 @@ gcloud_bucket <- 'https://storage.googleapis.com/mpgranch_data'
 links <- file.path(gcloud_bucket, files)
 
 for(i in seq_along(files)){
- download.file(links[i], destfile = file.path(tdir, files[i]))
+ #download.file(links[i], destfile = file.path(tdir, files[i]))
 }
 
 unzip('www/ecology_tools_dat.zip', exdir = 'www')
