@@ -9,11 +9,10 @@ server <- function(input, output,session) {
       addRasterImage(clust_wm,
                 colors = colorNumeric(domain =sim_pal$cluster, sim_pal$sim_hex,
                                       na.color = "transparent"),
-                
+                opacity = 0.7,
                 group = 'Environmental clusters',
                 project = FALSE,
-                layerId = 'simras')%>%
-
+                layerId = 'simras') %>%
       addLayersControl(overlayGroups = c('Environmental clusters', 'Grid points')) %>%
       addMapPane("polys", zIndex = 410) %>%
       addMapPane("markers", zIndex = 420)  %>%
