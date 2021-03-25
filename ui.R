@@ -14,6 +14,10 @@ ui <-  fillPage(
       inputId = 'pt_select',
       choices = point_choices
     ),
+    textInput(label = NULL,
+              placeholder = "Zoom to point...",
+                 input = 'zoom_id',
+                 width = '130px'),
     switchInput(
       inputId = 'sim_mode',
       'Similarity mode',
@@ -21,7 +25,7 @@ ui <-  fillPage(
       size = 'mini',
       onStatus = "success",
       offStatus = "danger"
-    ),
+    ),  
     top = 10,
     left = 10,
   ),

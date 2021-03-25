@@ -4,7 +4,6 @@ server <- function(input, output,session) {
     leaflet(
             options = leafletOptions(attributionControl=FALSE,
                                      zoomControl = FALSE)) %>%
-      setView(lng = -114.0045, lat = 46.69875, zoom = 14) %>%
       addProviderTiles("Esri.WorldImagery") %>%
       addLayersControl(overlayGroups = c('Environmental clusters', 'Grid points')) %>%
       addMapPane("polys", zIndex = 410) %>%
@@ -44,7 +43,7 @@ server <- function(input, output,session) {
   focal_dat <- reactive({
     
     sel <- input$pt_select
-    out <- gp_full_ll@data %>%
+    out <- gp_full_ll %>%
       pivot_longer(cols = samp_2021:samp_2041,
                    names_to = 'sample_year') %>%
       filter(value == 1) %>%
@@ -60,27 +59,38 @@ server <- function(input, output,session) {
   })
   
   observe({
-    focal_year_shp <- gp_full_ll
+    focal_year_shp <- gp_full_ll %>% mutate(Name = id) %>% arrange(id)
+    select_val <- input$pt_select 
 
-    if(input$pt_select != 0){
-      yr_colname <- paste('samp', input$pt_select, sep='_')
-
-      focal_year_shp <- focal_year_shp[which(focal_year_shp@data[,yr_colname] == 1),]
+    if(select_val != 0){
+      yr_colname <- paste('samp', select_val, sep='_')
+      focal_year_shp <- focal_year_shp %>% filter(!!rlang::sym(yr_colname) == 1)
     }
-    focal_name <- file.path('www',
-                           ifelse(input$pt_select == 0, 'all_grid_points.kmz', paste(input$pt_select, '_gp_targets.kml'))
+    
+    kml_name <- file.path('www',
+                           ifelse(select_val == 0, 'all_grid_points.kml', paste0(select_val, '_gp_targets.kml'))
                            )
+    csv_name <- file.path('www',
+                          ifelse(select_val == 0, 'all_grid_points.csv', paste0(select_val, '_gp_targets.csv'))
+    )
+    zip_name <- file.path('www',
+                          ifelse(select_val == 0, 'all_grid_points.zip', paste0(select_val, '_gp_targets.zip'))
+    )
 
-
-    KML(focal_year_shp, focal_name, overwrite = TRUE)
+    st_write(focal_year_shp, kml_name, driver = 'kml', delete_dsn = TRUE)
+    write.csv(focal_year_shp %>% 
+                as.data.frame(), csv_name, row.names = FALSE)
+    
+    zip(zipfile = zip_name, files = c(kml_name, csv_name), zip = 'zip', flags = '-j')
 
     output$points_kml <- downloadHandler(
       filename = function() {
-        basename(focal_name)
+        basename(zip_name)
       },
       content = function(file) {
-        file.copy(focal_name, file)
-      }
+        file.copy(zip_name, file)
+      },
+      contentType = 'application/zip'
 
     )
   })
@@ -101,6 +111,16 @@ server <- function(input, output,session) {
                      fillOpacity = 1, stroke = F,
                      group='Grid points', label=~id,
                      options = pathOptions(pane = "markers"))
+  })
+  
+  observeEvent(input$zoom_id,{
+    format_id <- input$zoom_id %>% str_pad(width = 3, pad = '0')
+    zoom_coords <- gp_full_ll %>% 
+      filter(id == format_id) %>%
+      select(long, lat)
+    leafletProxy("myMap") %>%
+      setView(lng = zoom_coords$long, lat = zoom_coords$lat, zoom = 18)
+      
   })
   
   observeEvent(input$myMap_click, {
@@ -133,7 +153,7 @@ server <- function(input, output,session) {
       file.remove(to_comb)
       
       output$modal_1 <- renderUI({
-        showModal(modalDialog(tags$iframe(style="height:85vh; width:100%", src='joined.pdf'), size = 'l', easyClose = T, footer = NULL))
+        showModal(modalDialog(tags$iframe(style="height:75vh; width:100%", src='joined.pdf'), size = 'l', easyClose = T, footer = NULL))
         
       })
     }
@@ -146,10 +166,34 @@ server <- function(input, output,session) {
       
       values(template)[umap_cells] <- 1-rescale(dists)
       
-      cols <- viridis::inferno(100)
-      pal <- colorNumeric(
+      point_sim <- raster::extract(template, gp_full_wm)
+      point_dat <- data.frame(id = gp_full_ll$id,
+                              cluster = gp_full_ll$cluster,
+                              long = gp_full_ll$long,
+                              lat = gp_full_ll$lat, 
+                              similarity = point_sim %>% round(., 4),
+                              gp_full_ll %>%
+                                as.data.frame() %>%
+                                select(Elevation:Canopy_cover) %>% round(.,2)) %>%
+        arrange(-similarity)
+      
+      cols <- rev(RColorBrewer::brewer.pal(11, 'Spectral'))
+      
+      heat_ras_pal <- colorNumeric(
         palette = cols,
         domain = values(template),
+        na.color = 'transparent'
+      )
+      
+      heat_pt_pal <- colorNumeric(
+        palette = cols,
+        domain = point_dat$similarity,
+        na.color = 'transparent'
+      )
+      
+      legend_pal <- colorFactor(
+        palette = cols,
+        domain = c('Low','','Med','','High'),
         na.color = 'transparent'
       )
       
@@ -159,36 +203,77 @@ server <- function(input, output,session) {
         addRasterImage(template,
                        project = FALSE,
                        opacity = 0.5,
-                       colors = pal,
+                       colors = heat_ras_pal,
                        layerId = 'heat',
                        group = 'Heatmap') %>%
-        addMarkers(data = data.frame(x = click$lng, y = click$lat), lng = ~x, lat = ~y) %>%
-        addLegend("bottomright", pal = pal,
-                  values = values(template),
+        addCircleMarkers(data = point_dat,
+                   lng = ~long, lat = ~lat,
+                   color = 'black',
+                   radius = 4,
+                   group = 'Grid points'
+        ) %>%
+        addCircleMarkers(data = point_dat, 
+                   lng = ~long, lat = ~lat,
+                   color = ~heat_pt_pal(similarity),
+                   opacity = 1,
+                   radius = 3,
+                   label = ~id,
+                   group = 'Grid points'
+                   ) %>%
+        addMarkers(data = data.frame(x = click$lng, y = click$lat), 
+                   lng = ~x, lat = ~y, label = 'Clicked point') %>%
+        addLegend("bottomright", 
+                  colors = cols,
+                  values = seq(0,1, length.out = 11),
+                  labFormat = c('Low', rep('',9), 'High'),
+                  labels = c('Low', rep('',9), 'High'),
                   title = "Similarity",
-                  
                   opacity = 1
         ) %>%
-        addLayersControl(overlayGroups = c('Heatmap')) 
+        addLayersControl(overlayGroups = c('Heatmap', 'Grid points')) 
       
-      heat_name <- 'www/env_sim'
+      heat_name <- 'www/similarity_heatmap.kmz'
+      table_name <- 'www/similar_points.csv'
+      points_name <- 'www/similar_points.kml'
+      zip_name <- 'www/similarity_files.zip'
+      
+      out_heat <- projectRaster(template, crs = CRS("+proj=longlat +datum=WGS84"))
+      names(out_heat) <- 'environmental_similarity'
+      
+      
+      KML(out_heat, heat_name, col = cols, overwrite = TRUE)
+      write.csv(point_dat, table_name, row.names = FALSE)
+      st_write(
+        st_as_sf(point_dat, coords = c('long', 'lat')) %>%
+          mutate(Name = paste0('Sim-', round(similarity, 3))),
+        points_name,
+        driver = 'kml',
+        delete_dsn = TRUE
+      )
+      
+      zip(zipfile = zip_name, files = c(heat_name, 
+                                        table_name,
+                                        points_name), 
+          zip = 'zip',
+          flags = '-j')
       
       output$heat_kmz <- downloadHandler(
         filename = function() {
-          paste(heat_name, ".kmz", sep="")
+          basename(zip_name)
         },
         content = function(file) {
-          out_heat <- projectRaster(template, crs = CRS("+proj=longlat +datum=WGS84"))
-          names(out_heat) <- 'environmental_similarity'
-          KML(out_heat, heat_name, col = cols, overwrite = TRUE)
-          file.copy('www/env_sim.kmz', file)
+          file.copy(zip_name, file)
         }
         
       )
-      
-      output$modal_2 <- renderUI(expr = {
-        showModal(modalDialog(renderLeaflet({heatmap}), 
-                              footer = downloadButton(outputId = 'heat_kmz', label = 'Google Earth layer'),
+    
+      output$modal_2 <- renderUI({
+        showModal(modalDialog(inputId = 'heatmap', 
+                              renderLeaflet(heatmap),
+                              br(),
+                              renderDataTable(point_dat, #%>% select(-long,-lat),
+                                              options = list(pageLength = 10, scrollX = T)),
+                              footer = downloadButton(outputId = 'heat_kmz', label = 'Offline data'),
                               size = 'l', 
                               easyClose = T))
         
