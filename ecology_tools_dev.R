@@ -1,14 +1,15 @@
 library(leafem)
 library(leaflet)
 library(leaflet.opacity)
-library(shiny)
-library(shinyWidgets)
+library(pdftools)
+library(RANN)
 library(raster)
 library(rgdal)
-library(pdftools)
 library(scales)
+library(shiny)
+library(shinyWidgets)
+library(sf)
 library(tidyverse)
-library(RANN)
 
 source('https://raw.githubusercontent.com/mosscoder/mpg_ecology_tools/dev/global.R') #remote global
 source('https://raw.githubusercontent.com/mosscoder/mpg_ecology_tools/dev/ui.R') #remote ui
