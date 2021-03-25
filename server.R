@@ -1,7 +1,6 @@
 server <- function(input, output,session) {
   
   output$myMap <- renderLeaflet({
-    
     leaflet(
             options = leafletOptions(attributionControl=FALSE,
                                      zoomControl = FALSE)) %>%
@@ -16,25 +15,29 @@ server <- function(input, output,session) {
       addLayersControl(overlayGroups = c('Environmental clusters', 'Grid points')) %>%
       addMapPane("polys", zIndex = 410) %>%
       addMapPane("markers", zIndex = 420)  %>%
-      addPolygons(data = cluster_shap,
-                  color = "transparent",
-                  weight = 0.25, 
-                  smoothFactor = 1.25,
-                  fillOpacity = 0,
-                  fillColor = 'transparent',
-                  group = 'Environmental clusters',
-                  options = pathOptions(pane = "polys"),
-                  highlightOptions = highlightOptions(
-                    color = "black",
-                    fillColor = 'red',
-                    fillOpacity = 1,
-                    weight = 1,
-                    bringToFront = FALSE
-                  )
-                    
-      ) %>%
       addOpacitySlider(layerId = 'simras')
     
+  })
+  
+  observe({
+    leafletProxy("myMap") %>%
+    addPolygons(data = cluster_shap,
+                color = "transparent",
+                weight = 0.25, 
+                smoothFactor = 1.25,
+                fillOpacity = 0,
+                fillColor = 'transparent',
+                group = 'Environmental clusters',
+                options = pathOptions(pane = "polys"),
+                highlightOptions = highlightOptions(
+                  color = "black",
+                  fillColor = 'red',
+                  fillOpacity = 1,
+                  weight = 1,
+                  bringToFront = FALSE
+                )
+                
+    ) 
   })
   
   focal_dat <- reactive({
