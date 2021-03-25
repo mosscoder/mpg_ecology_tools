@@ -30,7 +30,7 @@ umap_pts<- umap_pts %>%
   mutate(cluster = values(clust_wm)[umap_cells]) %>%
   left_join(sim_pal)
 
-cluster_shap <- shapefile('www/cluster_polys.shp') 
+cluster_shap <- st_read('www/cluster_polys.shp') 
 
 gp_full <-
   read.csv(file.path(tdir, 'grid_with_additions_and_envdat.csv')) %>%
