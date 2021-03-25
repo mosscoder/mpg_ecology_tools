@@ -4,14 +4,8 @@ server <- function(input, output,session) {
     leaflet(
             options = leafletOptions(attributionControl=FALSE,
                                      zoomControl = FALSE)) %>%
+      setView(lng = -114.0045, lat = 46.69875, zoom = 14) %>%
       addProviderTiles("Esri.WorldImagery") %>%
-      addRasterImage(clust_wm,
-                colors = colorNumeric(domain =sim_pal$cluster, sim_pal$sim_hex,
-                                      na.color = "transparent"),
-                opacity = 0.7,
-                group = 'Environmental clusters',
-                project = FALSE,
-                layerId = 'simras') %>%
       addLayersControl(overlayGroups = c('Environmental clusters', 'Grid points')) %>%
       addMapPane("polys", zIndex = 410) %>%
       addMapPane("markers", zIndex = 420)  %>%
@@ -21,6 +15,13 @@ server <- function(input, output,session) {
   
   observe({
     leafletProxy("myMap") %>%
+      addRasterImage(clust_wm,
+                     colors = colorNumeric(domain =sim_pal$cluster, sim_pal$sim_hex,
+                                           na.color = "transparent"),
+                     opacity = 0.7,
+                     group = 'Environmental clusters',
+                     project = FALSE,
+                     layerId = 'simras') %>%
     addPolygons(data = cluster_shap,
                 color = "transparent",
                 weight = 0.25, 
@@ -36,8 +37,7 @@ server <- function(input, output,session) {
                   weight = 1,
                   bringToFront = FALSE
                 )
-                
-    ) 
+              ) 
   })
   
   focal_dat <- reactive({
@@ -84,7 +84,6 @@ server <- function(input, output,session) {
     )
   })
 
-  
   
   observe({
     d <- focal_dat()
