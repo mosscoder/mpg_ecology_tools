@@ -8,7 +8,7 @@ server <- function(input, output,session) {
       addLayersControl(overlayGroups = c('Environmental clusters', 'Grid points')) %>%
       addMapPane("polys", zIndex = 410) %>%
       addMapPane("markers", zIndex = 420) %>%
-      addRasterImage(clust_wm,
+      addRasterImage(projectRasterForLeaflet(dim_red_stack[[3]], method = 'ngb'),
                      colors = colorNumeric(domain =sim_pal$cluster, sim_pal$sim_hex,
                                            na.color = "transparent"),
                      opacity = 0.7,
@@ -59,7 +59,7 @@ server <- function(input, output,session) {
   })
   
   observe({
-    focal_year_shp <- gp_full_ll %>% mutate(Name = id) %>% arrange(id)
+    focal_year_shp <- gp_full_ll %>% mutate(Name = id)
     select_val <- input$pt_select 
 
     if(select_val != 0){
@@ -115,12 +115,14 @@ server <- function(input, output,session) {
   
   observeEvent(input$zoom_id,{
     format_id <- input$zoom_id %>% str_pad(width = 3, pad = '0')
+    
+    if(format_id %in% gp_full_ll$id){
     zoom_coords <- gp_full_ll %>% 
       filter(id == format_id) %>%
       select(long, lat)
     leafletProxy("myMap") %>%
       setView(lng = zoom_coords$long, lat = zoom_coords$lat, zoom = 18)
-      
+    }
   })
   
   observeEvent(input$myMap_click, {
@@ -133,9 +135,9 @@ server <- function(input, output,session) {
     
     click_xy <- SpatialPoints(coords = data.frame(click$lng, click$lat),
                               proj4string=CRS('+init=epsg:4326'))
-    click_trans <- spTransform(click_xy, '+init=epsg:3857') 
-    clust_id <- raster::extract(clust_wm, click_trans)
-    umap_dat <- raster::extract(umap_wm, click_trans)
+    click_trans <- spTransform(click_xy, '+init=epsg:26911') 
+    clust_id <- raster::extract(dim_red_stack[[3]], click_trans)
+    umap_dat <- raster::extract(dim_red_stack[[1:2]], click_trans)
     
     if(!is.na(clust_id)  & isFALSE(input$sim_mode)){
       
@@ -164,9 +166,12 @@ server <- function(input, output,session) {
       dists <- RANN::nn2(data = umap_dat,
                 query = umap_pts[,3:4])$nn.dists %>% unlist()
       
+      template <- dim_red_stack[[1]]
       values(template)[umap_cells] <- 1-rescale(dists)
       
-      point_sim <- raster::extract(template, gp_full_wm)
+      point_sim <- raster::extract(template, gp_full_ll %>% 
+                                     as.data.frame() %>% 
+                                     select(easting, northing))
       point_dat <- data.frame(id = gp_full_ll$id,
                               cluster = gp_full_ll$cluster,
                               long = gp_full_ll$long,
@@ -191,17 +196,11 @@ server <- function(input, output,session) {
         na.color = 'transparent'
       )
       
-      legend_pal <- colorFactor(
-        palette = cols,
-        domain = c('Low','','Med','','High'),
-        na.color = 'transparent'
-      )
-      
       heatmap <- leaflet(options = leafletOptions(attributionControl = FALSE,
                                                   zooomControl = FALSE)) %>%
         addProviderTiles("Esri.WorldImagery") %>%
         addRasterImage(template,
-                       project = FALSE,
+                       project = TRUE,
                        opacity = 0.5,
                        colors = heat_ras_pal,
                        layerId = 'heat',
@@ -223,10 +222,10 @@ server <- function(input, output,session) {
         addMarkers(data = data.frame(x = click$lng, y = click$lat), 
                    lng = ~x, lat = ~y, label = 'Clicked point') %>%
         addLegend("bottomright", 
-                  colors = cols,
+                  colors = rev(cols),
                   values = seq(0,1, length.out = 11),
-                  labFormat = c('Low', rep('',9), 'High'),
-                  labels = c('Low', rep('',9), 'High'),
+                  labFormat = c('High', rep('',9), 'Low'),
+                  labels = c('High', rep('',9), 'Low'),
                   title = "Similarity",
                   opacity = 1
         ) %>%
@@ -237,32 +236,31 @@ server <- function(input, output,session) {
       points_name <- 'www/similar_points.kml'
       zip_name <- 'www/similarity_files.zip'
       
-      out_heat <- projectRaster(template, crs = CRS("+proj=longlat +datum=WGS84"))
-      names(out_heat) <- 'environmental_similarity'
-      
-      
-      KML(out_heat, heat_name, col = cols, overwrite = TRUE)
-      write.csv(point_dat, table_name, row.names = FALSE)
-      st_write(
-        st_as_sf(point_dat, coords = c('long', 'lat')) %>%
-          mutate(Name = paste0('Sim-', round(similarity, 3))),
-        points_name,
-        driver = 'kml',
-        delete_dsn = TRUE
-      )
-      
-      zip(zipfile = zip_name, files = c(heat_name, 
-                                        table_name,
-                                        points_name), 
-          zip = 'zip',
-          flags = '-j')
-      
       output$heat_kmz <- downloadHandler(
         filename = function() {
           basename(zip_name)
         },
         content = function(file) {
+          out_heat <- projectRaster(template, crs = CRS("+proj=longlat +datum=WGS84"))
+          names(out_heat) <- 'environmental_similarity'
+          KML(out_heat, heat_name, col = cols, overwrite = TRUE)
+          write.csv(point_dat, table_name, row.names = FALSE)
+          st_write(
+            st_as_sf(point_dat, coords = c('long', 'lat')) %>%
+              mutate(Name = paste0('Sim-', round(similarity, 3))),
+            points_name,
+            driver = 'kml',
+            delete_dsn = TRUE
+          )
+          
+          zip(zipfile = zip_name, files = c(heat_name, 
+                                            table_name,
+                                            points_name), 
+              zip = 'zip',
+              flags = '-j')
+          
           file.copy(zip_name, file)
+          
         }
         
       )

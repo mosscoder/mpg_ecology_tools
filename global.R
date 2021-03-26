@@ -17,17 +17,17 @@ for(i in seq_along(files)){
 unzip('www/ecology_tools_dat.zip', exdir = 'www')
 dim_red_stack <- stack(file.path(tdir,'umap_cluster.tif'))
 
-umap_wm <- template <-projectRasterForLeaflet(dim_red_stack[[1:2]], method = 'bilinear')
-clust_wm <-projectRasterForLeaflet(dim_red_stack[[3]], method = 'ngb')
-template <- template[[1]]
-umap_pts <- rasterToPoints(umap_wm)
-umap_cells <- cellFromXY(umap_wm, umap_pts[,1:2])
+umap_pts <- rasterToPoints(dim_red_stack)
+umap_cells <- cellFromXY(dim_red_stack, umap_pts[,1:2])
 
 sim_pal <- read.csv('www/sim_pal.csv')
 
-umap_pts<- umap_pts %>%
+umap_pts <- umap_pts %>%
   as.data.frame() %>%
-  mutate(cluster = values(clust_wm)[umap_cells]) %>%
+  rename(axis_1 = umap_cluster.1,
+         axis_2 = umap_cluster.2,
+         cluster = umap_cluster.3
+         ) %>%
   left_join(sim_pal)
 
 cluster_shap <- st_read('www/cluster_polys.shp') 
@@ -66,8 +66,11 @@ gp_full_ll <- gp_full_ll %>%
          wm_y = (gp_full_wm %>% st_coordinates())[,2]) %>%
   left_join(guidance) %>%
   select(id, cluster, point_age, 
-         long, lat, easting, northing,
-         everything())
+         long, lat,
+         easting, northing,
+         wm_x, wm_y,
+         everything()) %>%
+  arrange(id)
 
 point_choices <- c(0, 2021:2041)
 names(point_choices) <- c('All grid points',
