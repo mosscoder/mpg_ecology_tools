@@ -22,8 +22,8 @@ server <- function(input, output,session) {
   observe({
     leafletProxy("myMap") %>%
     addPolygons(data = cluster_shap,
-                color = "transparent",
-                weight = 0.25, 
+                color = "black",
+                weight = 0.2, 
                 smoothFactor = 1.25,
                 fillOpacity = 0,
                 fillColor = 'transparent',
