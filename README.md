@@ -39,8 +39,8 @@ Once the app is loaded you will see an interactive map. The
 environmental cluster overlay and grid point monitoring network
 locations are on by default. Transparency of the cluster overlay may be
 adjusted with the transparency slider in the upper right and both points
-and overlay may both be toggled on and off in the layers controls, also
-found in the upper right.
+and overlay may be toggled on and off in the layers controls, also found
+in the upper right.
 
 ## Visualize cluster extent
 

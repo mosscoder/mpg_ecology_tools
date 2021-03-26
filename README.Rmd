@@ -25,7 +25,7 @@ At the heart of the app is a product that depicts environmental sub-divisions, o
 knitr::include_graphics("https://lh6.googleusercontent.com/u9MFlodTUPUad1k9QrLgnT3XGsG0_87nRpxbRjZOSqdCjaWz00_Azd0zLH9xikPb_24HsI7KEkfRUXlhzFNGv2r83HwD5U5jjvhJspfbsxifFPimoHyDEsWdG5a6XSVC1mnoCas7")
 ```
 
-Once the app is loaded you will see an interactive map. The environmental cluster overlay and grid point monitoring network locations are on by default. Transparency of the cluster overlay may be adjusted with the transparency slider in the upper right and both points and overlay may both be toggled on and off in the layers controls, also found in the upper right.
+Once the app is loaded you will see an interactive map. The environmental cluster overlay and grid point monitoring network locations are on by default. Transparency of the cluster overlay may be adjusted with the transparency slider in the upper right and both points and overlay may be toggled on and off in the layers controls, also found in the upper right.
 
 ## Visualize cluster extent
 ```{r, echo=FALSE, out.height="400px"}
