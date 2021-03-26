@@ -12,7 +12,7 @@ terrain (abiotic), vegetation structure (biotic), and land-use history
 facilitate its study across the property. Some use cases for the app
 include selection of survey sites, identifying areas environmentally
 similar to a point of interest, guiding native seed collection, and
-identifying homogeneous units for targeted restoration seed mixes.
+identifying homogeneous units for targeted restoration seeding.
 
 ## Background
 
@@ -23,10 +23,10 @@ will find conditions are homogeneous in terms of elevation, slope, solar
 inputs, drainage, plant canopy cover, plant canopy height, and
 probability of past agricultural activity. These clusters do not
 represent an attempt to classify the study region into discrete habitat
-types, though there may be some correspondence. The clusters instead are
-better thought of as a device to evenly sample the range of
-environmental conditions present on the property. For further
-information on the methods for developing the clusters
+types, though there may be some correspondence. The clusters are best
+thought of as a device to evenly sample the range of environmental
+conditions present on the property. For further information on the
+methods for developing the clusters
 
 [please refer to this
 document](https://docs.google.com/document/d/e/2PACX-1vTcnPVBAkI0Pbwa0gc0LmNPKL_91BtwnLOWDMSwurHrc_D9l45IKcbwOtw3Uhu_iA4zTXU6F5Xs1Zph/pub).
@@ -68,9 +68,9 @@ or diversity (beta).
 <img src="https://lh6.googleusercontent.com/vmINM_hp988IJsOjr83Rc0AscPhSTmzpo6xHGg2jnVFr4VpPzu26h4RDxmxiZ2gjdtRbJ90hDo0sul-sIcpClEsHsnAisQi8gQtr1xu4Ke94uorof8bA_z8FXtq3MovX6409eUw3" height="400px" />
 
 By default all grid points are shown, but points may be filtered by
-suggested annual sampling locations using the dropdown menu in the upper
-left corner. In this strategy a single point is observed from each of
-the 63 environmental clusters each year. This strategy was developed for
-the vegetation survey, but may be applied to any monitoring effort. To
-download a spreadsheet and Google Earth layer, click the download button
-to the right of the point selection drop down menu.
+suggested annual sampling locations using the drop down menu in the
+upper left corner. In this strategy a single point is observed from each
+of the 63 environmental clusters each year. This strategy was developed
+for the vegetation survey, but may be applied to any monitoring effort.
+To download a spreadsheet and Google Earth layer, click the download
+button to the right of the point selection drop down menu.
