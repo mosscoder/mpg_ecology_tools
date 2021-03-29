@@ -28,20 +28,20 @@ thought of as a device to evenly sample the range of environmental
 conditions present on the property. Observing the full range of
 conditions is critical to training contemporary models that learn by
 example. For further information on the methods for developing the
-clusters
-
-[please refer to this document](doc_url).
+clusters please refer to
+<a href="https://docs.google.com/document/d/e/2PACX-1vTcnPVBAkI0Pbwa0gc0LmNPKL_91BtwnLOWDMSwurHrc_D9l45IKcbwOtw3Uhu_iA4zTXU6F5Xs1Zph/pub">this
+document</a>.
 
 ## Basics
 
 <img src="https://github.com/mosscoder/mpg_ecology_tools/blob/dev/images/transparency.png?raw=true" height="400px" />
 
-Once the app is loaded you will see an interactive map. The
-environmental cluster overlay and grid point monitoring network
-locations are on by default. Transparency of the cluster overlay may be
-adjusted with the transparency slider in the upper right and both points
-and overlay may be toggled on and off in the layers controls, also found
-in the upper right.
+Once the app is loaded you will see an interactive map. By default the
+grid point network and environmental clusters are displayed.
+Transparency of the cluster overlay may be adjusted with the
+transparency slider in the upper right and both points and overlay may
+be toggled on and off in the layers controls, also found in the upper
+right.
 
 ## Visualize cluster extent
 
@@ -62,7 +62,7 @@ plots that show the range and probability density of the seven
 environmental properties upon which the cluster analysis was based. Also
 included in this report are suggested native forb seed mixes for average
 and drought years depending on whether the objective is to enhance cover
-or diversity (beta).
+or diversity (under development).
 
 ## Filter points by sampling year
 
