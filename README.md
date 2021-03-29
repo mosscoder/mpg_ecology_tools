@@ -3,17 +3,18 @@ MPG Ranch Ecology Tools
 
 ## Introduction
 
-Welcome to the [Ecology Tools
-app\*](mpgranch.shinyapps.io/ecology_tools), a resource developed to
-support research and management at MPG Ranch. One critical objective in
-ecology is understanding how biological patterns correlate with
-environmental conditions, such as aspects of terrain (abiotic),
-vegetation structure (biotic), and land-use history (anthropogenic).
-Ecology Tools visualizes environmental variability and facilitate its
-study across the property. Some use cases for the app include selection
-of survey sites, identifying areas environmentally similar to a point of
-interest, guiding native seed collection, and identifying homogeneous
-units for targeted restoration seeding.
+Welcome to the
+<a href="https://mpgranch.shinyapps.io/ecology_tools/">Ecology Tools
+app\*</a>, a resource developed to support research and management at
+MPG Ranch. One critical objective in ecology is understanding how
+biological patterns correlate with environmental conditions, such as
+aspects of terrain (abiotic), vegetation structure (biotic), and
+land-use history (anthropogenic). Ecology Tools visualizes environmental
+variability and facilitate its study across the property. Some use cases
+for the app include selection of survey sites, identifying areas
+environmentally similar to a point of interest, guiding native seed
+collection, and identifying homogeneous units for targeted restoration
+seeding.
 
 \*<i>Please note that this tool is not yet optimized for smart phone or
 tablet devices.</i>
@@ -57,7 +58,8 @@ To visualize the spatial extent of a cluster you may hover over a region
 of the map with your cursor and the underlying cluster will be
 highlighted in red. Note that clusters and points are colored such that
 similar colors correspond to similar environmental conditions. Also note
-that you can reveal the ID of any point by hovering your cursor over it.
+that you can reveal the ID of any grid point by hovering your cursor
+over it.
 
 ### Inspect cluster conditions
 
@@ -80,8 +82,9 @@ suggested annual sampling locations using the drop down menu in the
 upper left corner. In this strategy a single point is observed from each
 of the 63 environmental clusters each year. This strategy was developed
 for the vegetation survey, but may be applied to any monitoring effort.
-To download a spreadsheet and Google Earth layer, click the download
-button to the right of the point selection drop down menu.
+To download a spreadsheet and Google Earth layer containing the metadata
+of the selected points, click the download button to the right of the
+point selection drop down menu.
 
 ### Zoom to grid point
 
