@@ -113,12 +113,12 @@ another interactive map and table.
 <img src="https://github.com/mosscoder/mpg_ecology_tools/blob/dev/images/sim_map.png?raw=true" width="100%" />
 
 Within the map you will find grid points colored by their similarity to
-the clicked point (overlayed as blue pin) of interest as well as a
-heatmap, also colored by similarity. Dark red values indicate high
-environmental similarity and dark blue values indicate low similarity.
-Both layers may be toggled off with the controls in the upper right
+the clicked point (blue pin) of interest as well as a heatmap, also
+colored by similarity. Dark red values indicate high environmental
+similarity and dark blue values indicate low similarity. Both layers may
+be toggled off with the controls in the upper right
 
-### Simiarlity table
+### Similarity table
 
 <img src="https://github.com/mosscoder/mpg_ecology_tools/blob/dev/images/sim_table.png?raw=true" width="100%" />
 
