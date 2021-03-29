@@ -12,7 +12,7 @@ links <- file.path(gcloud_bucket, files)
 md_url <- 'https://raw.githubusercontent.com/mosscoder/mpg_ecology_tools/main/README.md'
 
 for(i in seq_along(files)){
- #download.file(links[i], destfile = file.path(tdir, files[i]))
+ download.file(links[i], destfile = file.path(tdir, files[i]))
 }
 
 download.file(md_url, destfile = file.path(tdir, 'readme.md'))
