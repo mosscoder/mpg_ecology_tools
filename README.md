@@ -5,7 +5,7 @@ MPG Ranch Ecology Tools
 
 Welcome to the
 <a href="https://mpgranch.shinyapps.io/ecology_tools/">Ecology Tools
-app\*</a>, a resource developed to support research and management at
+app</a>\*, a resource developed to support research and management at
 MPG Ranch. One critical objective in ecology is understanding how
 biological patterns correlate with environmental conditions, such as
 aspects of terrain (abiotic), vegetation structure (biotic), and
@@ -41,7 +41,7 @@ document</a>.
 
 ### Toggle overlays on/off
 
-<img src="https://github.com/mosscoder/mpg_ecology_tools/blob/dev/images/transparency.png?raw=true" height="400px" />
+<img src="https://github.com/mosscoder/mpg_ecology_tools/blob/dev/images/transparency.png?raw=true" width="100%" />
 
 Once the app is loaded you will see an interactive map. By default the
 grid point network and environmental clusters are displayed.
@@ -52,7 +52,7 @@ right.
 
 ### Visualize cluster extent
 
-<img src="https://github.com/mosscoder/mpg_ecology_tools/blob/dev/images/highlights.png?raw=true" height="400px" />
+<img src="https://github.com/mosscoder/mpg_ecology_tools/blob/dev/images/highlights.png?raw=true" width="100%" />
 
 To visualize the spatial extent of a cluster you may hover over a region
 of the map with your cursor and the underlying cluster will be
@@ -63,7 +63,7 @@ over it.
 
 ### Inspect cluster conditions
 
-<img src="https://github.com/mosscoder/mpg_ecology_tools/blob/dev/images/clust_report.png?raw=true" height="400px" />
+<img src="https://github.com/mosscoder/mpg_ecology_tools/blob/dev/images/clust_report.png?raw=true" width="100%" />
 
 To inspect the conditions within a cluster you may click on it. This
 produces a report with a static map of the cluster extent and violin
@@ -75,7 +75,7 @@ or diversity (under development).
 
 ### Filter points by sampling year
 
-<img src="https://github.com/mosscoder/mpg_ecology_tools/blob/dev/images/survey_years.png?raw=true" height="400px" />
+<img src="https://github.com/mosscoder/mpg_ecology_tools/blob/dev/images/survey_years.png?raw=true" width="50%" />
 
 By default all grid points are shown, but points may be filtered by
 suggested annual sampling locations using the drop down menu in the
@@ -88,7 +88,7 @@ point selection drop down menu.
 
 ### Zoom to grid point
 
-<img src="https://github.com/mosscoder/mpg_ecology_tools/blob/dev/images/zoomto.png?raw=true" height="400px" />
+<img src="https://github.com/mosscoder/mpg_ecology_tools/blob/dev/images/zoomto.png?raw=true" width="50%" />
 
 To focus the map on a grid point of interest, type the ID number into
 the “Zoom to point…” text box in the upper left.
@@ -97,7 +97,7 @@ the “Zoom to point…” text box in the upper left.
 
 ### Similarity mode
 
-<img src="https://github.com/mosscoder/mpg_ecology_tools/blob/dev/images/sim_mode.png?raw=true" height="400px" />
+<img src="https://github.com/mosscoder/mpg_ecology_tools/blob/dev/images/sim_mode.png?raw=true" width="50%" />
 
 By toggling similarity mode on (switch in upper left) you can identify
 sites and grid points that are environmentally similar to a point of
@@ -110,7 +110,7 @@ another interactive map and table.
 
 ### Similarity map
 
-<img src="https://github.com/mosscoder/mpg_ecology_tools/blob/dev/images/sim_map.png?raw=true" height="400px" />
+<img src="https://github.com/mosscoder/mpg_ecology_tools/blob/dev/images/sim_map.png?raw=true" width="100%" />
 
 Within the map you will find grid points colored by their similarity to
 the clicked point (overlayed as blue pin) of interest as well as a
@@ -120,7 +120,7 @@ Both layers may be toggled off with the controls in the upper right
 
 ### Simiarlity table
 
-<img src="https://github.com/mosscoder/mpg_ecology_tools/blob/dev/images/sim_table.png?raw=true" height="400px" />
+<img src="https://github.com/mosscoder/mpg_ecology_tools/blob/dev/images/sim_table.png?raw=true" width="100%" />
 
 Within the popup you will also find a table that provides a ranked list
 of grid points sorted by environmental similarity to the clicked point.
@@ -129,7 +129,7 @@ environmental properties are presented in the table.
 
 ### Download data
 
-<img src="https://github.com/mosscoder/mpg_ecology_tools/blob/dev/images/sim_download.png?raw=true" height="100px" />
+<img src="https://github.com/mosscoder/mpg_ecology_tools/blob/dev/images/sim_download.png?raw=true" width="15%" />
 
 The products of the similarity analyses: heatmap, grid points, and table
 may be downloaded for offline inspection by clicking the button at the
