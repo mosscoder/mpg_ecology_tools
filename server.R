@@ -1,9 +1,13 @@
 server <- function(input, output,session) {
   
+  showModal(modalDialog(includeMarkdown("www/readme.md"),
+                        size = 'l', easyClose = T, footer = NULL))
+  
+  
   output$myMap <- renderLeaflet({
     leaflet(
-            options = leafletOptions(attributionControl=FALSE,
-                                     zoomControl = FALSE)) %>%
+      options = leafletOptions(attributionControl=FALSE,
+                               zoomControl = FALSE)) %>%
       addProviderTiles("Esri.WorldImagery") %>%
       addLayersControl(overlayGroups = c('Environmental clusters', 'Grid points')) %>%
       addMapPane("polys", zIndex = 410) %>%
@@ -21,23 +25,23 @@ server <- function(input, output,session) {
   
   observe({
     leafletProxy("myMap") %>%
-    addPolygons(data = cluster_shap,
-                color = "black",
-                weight = 0.2, 
-                smoothFactor = 1.25,
-                fillOpacity = 0,
-                fillColor = 'transparent',
-                group = 'Environmental clusters',
-                options = pathOptions(pane = "polys"),
-                highlightOptions = highlightOptions(
+      addPolygons(data = cluster_shap,
                   color = "black",
-                  fillColor = 'red',
-                  fillOpacity = 1,
-                  weight = 1,
-                  bringToFront = FALSE
-                )
-              ) 
-      
+                  weight = 0.2, 
+                  smoothFactor = 1.25,
+                  fillOpacity = 0,
+                  fillColor = 'transparent',
+                  group = 'Environmental clusters',
+                  options = pathOptions(pane = "polys"),
+                  highlightOptions = highlightOptions(
+                    color = "black",
+                    fillColor = 'red',
+                    fillOpacity = 1,
+                    weight = 1,
+                    bringToFront = FALSE
+                  )
+      ) 
+    
   })
   
   focal_dat <- reactive({
@@ -61,28 +65,28 @@ server <- function(input, output,session) {
   observe({
     focal_year_shp <- gp_full_ll %>% mutate(Name = id)
     select_val <- input$pt_select 
-
+    
     if(select_val != 0){
       yr_colname <- paste('samp', select_val, sep='_')
       focal_year_shp <- focal_year_shp %>% filter(!!rlang::sym(yr_colname) == 1)
     }
     
     kml_name <- file.path('www',
-                           ifelse(select_val == 0, 'all_grid_points.kml', paste0(select_val, '_gp_targets.kml'))
-                           )
+                          ifelse(select_val == 0, 'all_grid_points.kml', paste0(select_val, '_gp_targets.kml'))
+    )
     csv_name <- file.path('www',
                           ifelse(select_val == 0, 'all_grid_points.csv', paste0(select_val, '_gp_targets.csv'))
     )
     zip_name <- file.path('www',
                           ifelse(select_val == 0, 'all_grid_points.zip', paste0(select_val, '_gp_targets.zip'))
     )
-
+    
     st_write(focal_year_shp, kml_name, driver = 'kml', delete_dsn = TRUE)
     write.csv(focal_year_shp %>% 
                 as.data.frame(), csv_name, row.names = FALSE)
     
     zip(zipfile = zip_name, files = c(kml_name, csv_name), zip = 'zip', flags = '-j')
-
+    
     output$points_kml <- downloadHandler(
       filename = function() {
         basename(zip_name)
@@ -91,37 +95,37 @@ server <- function(input, output,session) {
         file.copy(zip_name, file)
       },
       contentType = 'application/zip'
-
+      
     )
   })
-
+  
   
   observe({
     d <- focal_dat()
-  
+    
     leafletProxy("myMap", data = d)  %>%
       clearMarkers() %>%
       addCircleMarkers( lng= ~long, lat =~lat, 
-                       radius=5.5, color='black',fillOpacity = 1, stroke = F,
-                       group='Grid points', label=~id,
-                       options = pathOptions(pane = "markers")) %>%
+                        radius=5.5, color='black',fillOpacity = 1, stroke = F,
+                        group='Grid points', label=~id,
+                        options = pathOptions(pane = "markers")) %>%
       addCircleMarkers(lng= ~long, lat =~lat,
-                     radius=4, 
-                     color= d$sim_hex, 
-                     fillOpacity = 1, stroke = F,
-                     group='Grid points', label=~id,
-                     options = pathOptions(pane = "markers"))
+                       radius=4, 
+                       color= d$sim_hex, 
+                       fillOpacity = 1, stroke = F,
+                       group='Grid points', label=~id,
+                       options = pathOptions(pane = "markers"))
   })
   
   observeEvent(input$zoom_id,{
     format_id <- input$zoom_id %>% str_pad(width = 3, pad = '0')
     
     if(format_id %in% gp_full_ll$id){
-    zoom_coords <- gp_full_ll %>% 
-      filter(id == format_id) %>%
-      select(long, lat)
-    leafletProxy("myMap") %>%
-      setView(lng = zoom_coords$long, lat = zoom_coords$lat, zoom = 18)
+      zoom_coords <- gp_full_ll %>% 
+        filter(id == format_id) %>%
+        select(long, lat)
+      leafletProxy("myMap") %>%
+        setView(lng = zoom_coords$long, lat = zoom_coords$lat, zoom = 18)
     }
   })
   
@@ -164,7 +168,7 @@ server <- function(input, output,session) {
     if(!is.na(umap_dat) & isTRUE(input$sim_mode)){
       
       dists <- RANN::nn2(data = umap_dat,
-                query = umap_pts[,3:4])$nn.dists %>% unlist()
+                         query = umap_pts[,3:4])$nn.dists %>% unlist()
       
       template <- dim_red_stack[[1]]
       values(template)[umap_cells] <- 1-rescale(dists)
@@ -206,19 +210,19 @@ server <- function(input, output,session) {
                        layerId = 'heat',
                        group = 'Heatmap') %>%
         addCircleMarkers(data = point_dat,
-                   lng = ~long, lat = ~lat,
-                   color = 'black',
-                   radius = 4,
-                   group = 'Grid points'
+                         lng = ~long, lat = ~lat,
+                         color = 'black',
+                         radius = 4,
+                         group = 'Grid points'
         ) %>%
         addCircleMarkers(data = point_dat, 
-                   lng = ~long, lat = ~lat,
-                   color = ~heat_pt_pal(similarity),
-                   opacity = 1,
-                   radius = 3,
-                   label = ~id,
-                   group = 'Grid points'
-                   ) %>%
+                         lng = ~long, lat = ~lat,
+                         color = ~heat_pt_pal(similarity),
+                         opacity = 1,
+                         radius = 3,
+                         label = ~id,
+                         group = 'Grid points'
+        ) %>%
         addMarkers(data = data.frame(x = click$lng, y = click$lat), 
                    lng = ~x, lat = ~y, label = 'Clicked point') %>%
         addLegend("bottomright", 
@@ -264,7 +268,7 @@ server <- function(input, output,session) {
         }
         
       )
-    
+      
       output$modal_2 <- renderUI({
         showModal(modalDialog(inputId = 'heatmap', 
                               renderLeaflet(heatmap),
@@ -281,9 +285,9 @@ server <- function(input, output,session) {
   })
   
   session$onSessionEnded(function() {
-    trash <- setdiff(list.files('www', full.names = TRUE), list.dirs('www', recursive = FALSE, full.names = TRUE))
-    trash <- trash[which(!trash %in% 'www/ecology_tools_dat.zip')]
-    file.remove(trash)
+    # trash <- setdiff(list.files('www', full.names = TRUE), list.dirs('www', recursive = FALSE, full.names = TRUE))
+    # trash <- trash[which(!trash %in% 'www/ecology_tools_dat.zip')]
+    # file.remove(trash)
   })
   
   
