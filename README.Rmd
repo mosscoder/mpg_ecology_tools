@@ -2,22 +2,22 @@
 title: "MPG Ranch Ecology Tools"
 output: github_document
 ---
-
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+```{r, echo=FALSE, out.width="100%"}
+knitr::include_graphics("https://github.com/mosscoder/mpg_ecology_tools/blob/dev/images/overview.png?raw=true")
+```
+
 ## Introduction
 
-Welcome to the <a href="https://mpgranch.shinyapps.io/ecology_tools/">Ecology Tools app</a>*, a resource developed to support research and management at MPG Ranch. One critical objective in ecology is understanding how biological patterns correlate with environmental conditions, such as aspects of terrain (abiotic), vegetation structure (biotic), and land-use history (anthropogenic). Ecology Tools visualizes environmental variability and facilitate its study across the property. Some use cases for the app include selection of survey sites, identifying areas environmentally similar to a point of interest, guiding native seed collection, and identifying homogeneous units for targeted restoration seeding. 
+Welcome to the <a href="https://mpgranch.shinyapps.io/ecology_tools/">Ecology Tools app</a>*, a resource developed to support research and management at MPG Ranch. One critical objective in ecology is understanding how biological patterns correlate with environmental conditions, such as aspects of terrain (abiotic), vegetation structure (biotic), and land-use history (anthropogenic). Ecology Tools visualizes environmental variability and facilitates its study across the property. Some use cases for the app include selection of survey sites, identifying areas environmentally similar to a point of interest, guiding native seed collection, and identifying homogeneous units for targeted restoration seeding. 
 
 *<i>Please note that this tool is not yet optimized for smart phone or tablet devices.</i>
 
 ## Background
 
-```{r, echo=FALSE, out.height="300px", out.extra='style="float:right; padding:10px"'}
-knitr::include_graphics("https://github.com/mosscoder/mpg_ecology_tools/blob/dev/images/overview.png?raw=true")
-```
 At the heart of the app is a product that depicts environmental sub-divisions, or clusters, across MPG Ranch. Within each cluster you will find conditions are homogeneous in terms of elevation, slope, solar inputs, drainage, plant canopy cover, plant canopy height, and probability of past agricultural activity. These clusters do not represent an attempt to classify the study region into discrete habitat types, though there may be some correspondence. The clusters are best thought of as a device to evenly sample the range of environmental conditions present on the property. Observing the full range of conditions is critical to training contemporary models that learn by example. For further information on the methods for developing the clusters please refer to <a href="https://docs.google.com/document/d/e/2PACX-1vTcnPVBAkI0Pbwa0gc0LmNPKL_91BtwnLOWDMSwurHrc_D9l45IKcbwOtw3Uhu_iA4zTXU6F5Xs1Zph/pub">this document</a>.
 
 ## Basics

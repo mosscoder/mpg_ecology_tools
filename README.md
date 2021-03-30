@@ -1,6 +1,8 @@
 MPG Ranch Ecology Tools
 ================
 
+<img src="https://github.com/mosscoder/mpg_ecology_tools/blob/dev/images/overview.png?raw=true" width="100%" />
+
 ## Introduction
 
 Welcome to the
@@ -10,8 +12,8 @@ MPG Ranch. One critical objective in ecology is understanding how
 biological patterns correlate with environmental conditions, such as
 aspects of terrain (abiotic), vegetation structure (biotic), and
 land-use history (anthropogenic). Ecology Tools visualizes environmental
-variability and facilitate its study across the property. Some use cases
-for the app include selection of survey sites, identifying areas
+variability and facilitates its study across the property. Some use
+cases for the app include selection of survey sites, identifying areas
 environmentally similar to a point of interest, guiding native seed
 collection, and identifying homogeneous units for targeted restoration
 seeding.
@@ -21,7 +23,6 @@ tablet devices.</i>
 
 ## Background
 
-<img src="https://github.com/mosscoder/mpg_ecology_tools/blob/dev/images/overview.png?raw=true" height="300px" style="float:right; padding:10px" />
 At the heart of the app is a product that depicts environmental
 sub-divisions, or clusters, across MPG Ranch. Within each cluster you
 will find conditions are homogeneous in terms of elevation, slope, solar
