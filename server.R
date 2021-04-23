@@ -102,7 +102,8 @@ server <- function(input, output,session) {
     }
    
     write.csv(focal_year_shp %>% 
-                as.data.frame(), csv_name, row.names = FALSE)
+                as.data.frame() %>%
+                select(-geometry,-Name), csv_name, row.names = FALSE)
     
     zip(zipfile = zip_name, files = c(kml_name, csv_name), zip = 'zip', flags = '-j')
     
