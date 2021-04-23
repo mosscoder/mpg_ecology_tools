@@ -47,7 +47,7 @@ server <- function(input, output,session) {
   focal_dat <- reactive({
     
     sel <- input$pt_select
-    out <- gp_full_ll %>%
+    out <- mid <- gp_full_ll %>%
       pivot_longer(cols = samp_2021:samp_2041,
                    names_to = 'sample_year') %>%
       filter(value == 1) %>%
@@ -55,7 +55,11 @@ server <- function(input, output,session) {
       select(-value)
     
     if(sel > 0){
-      out <- out %>% filter(sample_year == sel)
+      out <- mid %>% filter(sample_year == sel)
+    }
+    
+    if(sel > 0 & isTRUE(input$standing_pts)){
+      out <- out %>% rbind(mid %>% filter(standing == 1) %>% mutate(sample_year = sel) %>% unique)
     }
     
     out
@@ -63,17 +67,20 @@ server <- function(input, output,session) {
   })
   
   observe({
-    focal_year_shp <- gp_full_ll %>% mutate(Name = id)
+    focal_year_shp <- gp_full_ll %>% 
+      mutate(Name = id) %>%
+      select(-med_1, -med_2, -sim_hex, -standing)
+      
     select_val <- input$pt_select 
     
     if(select_val != 0){
+      focal_year_shp <- focal_dat() %>%
+        select(-med_1, -med_2, -sim_hex, -standing) %>%
+        mutate(Name = id) %>% 
+        arrange(priority, id)
       yr_colname <- paste('samp', select_val, sep='_')
-      focal_year_shp <- focal_year_shp %>% filter(!!rlang::sym(yr_colname) == 1)
     }
     
-    kml_name <- file.path('www',
-                          ifelse(select_val == 0, 'all_grid_points.kml', paste0(select_val, '_gp_targets.kml'))
-    )
     csv_name <- file.path('www',
                           ifelse(select_val == 0, 'all_grid_points.csv', paste0(select_val, '_gp_targets.csv'))
     )
@@ -81,7 +88,19 @@ server <- function(input, output,session) {
                           ifelse(select_val == 0, 'all_grid_points.zip', paste0(select_val, '_gp_targets.zip'))
     )
     
-    st_write(focal_year_shp, kml_name, driver = 'kml', delete_dsn = TRUE)
+    focal_year_shp$geometry
+    
+    if(select_val == 0){
+      kml_name <- file.path('www','all_grid_points.kml') 
+      st_write(focal_year_shp, kml_name, driver = 'kml', delete_dsn = TRUE)
+    } else {
+      kml_high_name <- file.path('www',paste0(select_val, '_gp_high_priority_targets.kml'))
+      kml_low_name <- file.path('www',paste0(select_val, '_gp_low_priority_targets.kml'))
+      st_write(focal_year_shp %>% filter(priority == 'higher'), kml_high_name, driver = 'kml', delete_dsn = TRUE)
+      st_write(focal_year_shp %>% filter(priority == 'lower'), kml_low_name, driver = 'kml', delete_dsn = TRUE)
+      kml_name <- c(kml_high_name, kml_low_name)
+    }
+   
     write.csv(focal_year_shp %>% 
                 as.data.frame(), csv_name, row.names = FALSE)
     
@@ -105,17 +124,29 @@ server <- function(input, output,session) {
     
     leafletProxy("myMap", data = d)  %>%
       clearMarkers() %>%
-      addCircleMarkers( lng= ~long, lat =~lat, 
-                        radius=5.5, color='black',fillOpacity = 1, stroke = F,
+      addCircleMarkers( lng= ~long, lat =~lat,
+                        radius=  5.5,
+                        color='black',fillOpacity = 1, stroke = F,
                         group='Grid points', label=~id,
                         options = pathOptions(pane = "markers")) %>%
       addCircleMarkers(lng= ~long, lat =~lat,
-                       radius=4, 
-                       color= d$sim_hex, 
+                       radius= 4,
+                       color= d$sim_hex,
                        fillOpacity = 1, stroke = F,
                        group='Grid points', label=~id,
-                       options = pathOptions(pane = "markers"))
+                       options = pathOptions(pane = "markers")) 
+   
+   if(input$pt_select != '0' ){
+    leafletProxy("myMap",
+                 data = d %>% filter(priority == 'higher')) %>%
+      addMarkers(icon =  flag_icon, 
+                        lng = ~long,
+                        lat = ~lat,
+                        group='Grid points', 
+                        options = pathOptions(pane = "markers"))
+    }
   })
+  
   
   observeEvent(input$zoom_id,{
     format_id <- input$zoom_id %>% str_pad(width = 3, pad = '0')

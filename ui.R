@@ -20,7 +20,7 @@ ui <-  fillPage(
                  width = '130px'),
     switchInput(
       inputId = 'sim_mode',
-      'Similarity mode',
+      'Similarity Mode',
       value = FALSE,
       size = 'mini',
       onStatus = "success",
@@ -29,6 +29,15 @@ ui <-  fillPage(
     top = 10,
     left = 10,
   ),
+  absolutePanel( switchInput(
+    inputId = 'standing_pts',
+    'Standing Points',
+    value = FALSE,
+    size = 'mini',
+    onStatus = "success",
+    offStatus = "danger"
+  ),
+                top = 10, left = 145),
   absolutePanel(downloadButton(outputId = 'points_kml', label = NULL),
-                top = 10, left = 145)
+                top = 10, left = 245)
 )
