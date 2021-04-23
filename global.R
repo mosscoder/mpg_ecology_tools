@@ -4,7 +4,7 @@ dir.create(tdir)
 
 base_file <- 'ecology_tools_dat.zip'
 
-gcloud_bucket <- 'https://storage.googleapis.com/mpgranch_data/'
+gcloud_bucket <- 'https://storage.googleapis.com/mpgranch_data'
 base_url <- file.path(gcloud_bucket, base_file)
 md_url <- 'https://raw.githubusercontent.com/mosscoder/mpg_ecology_tools/main/README.md'
 standing_pt_url <- 
