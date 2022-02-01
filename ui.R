@@ -11,6 +11,7 @@ ui <-  fillPage(
     selectInput(
       width = '130px',
       label = NULL,
+      selected = lubridate::year(Sys.Date()),
       inputId = 'pt_select',
       choices = point_choices
     ),
